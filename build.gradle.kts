@@ -41,6 +41,8 @@ dependencies {
     testImplementation("net.jqwik:jqwik:${jqwik_version}")
     val assertj_version: String by project
     testImplementation("org.assertj:assertj-core:${assertj_version}")
+
+    implementation(files("libs/koreanpatch-1.3.1-1.20.1.jar"))
 }
 
 java {

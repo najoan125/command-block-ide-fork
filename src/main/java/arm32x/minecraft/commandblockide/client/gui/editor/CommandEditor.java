@@ -8,15 +8,10 @@ import arm32x.minecraft.commandblockide.client.processor.MultilineCommandProcess
 import arm32x.minecraft.commandblockide.client.processor.StringMapping;
 import arm32x.minecraft.commandblockide.mixin.client.ChatInputSuggestorAccessor;
 import arm32x.minecraft.commandblockide.mixinextensions.client.ChatInputSuggestorExtension;
+import com.hyfata.najoan.koreanpatch.client.KoreanPatchClient;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.context.ParsedArgument;
 import com.mojang.brigadier.context.StringRange;
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.IntConsumer;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -28,7 +23,6 @@ import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
@@ -37,6 +31,14 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.OptionalInt;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Environment(EnvType.CLIENT)
 public abstract class CommandEditor extends Container implements Dirtyable, Drawable, Element {
@@ -75,8 +77,8 @@ public abstract class CommandEditor extends Container implements Dirtyable, Draw
 
 		commandField = addSelectableChild(new MultilineTextFieldWidget(
 			textRenderer,
-			x + leftPadding + 20 + 1, y + 1,
-			width - leftPadding - rightPadding - 20 - 2, height - 2,
+			x + leftPadding + 20 + 1 +18, y + 1,
+			width - leftPadding - rightPadding - 20 - 2 -18, height - 2,
 			Text.translatable("advMode.command")
 				.append(Text.translatable("commandBlockIDE.narrator.editorIndex", index + 1))
 		) {
@@ -189,7 +191,30 @@ public abstract class CommandEditor extends Container implements Dirtyable, Draw
 		} else {
 			context.drawText(textRenderer, Text.translatable("commandBlockIDE.unloaded"), commandField.getX(), y + 5, 0x7FFFFFFF, false);
 		}
+
+		int x = commandField.getX();
+		if (commandField.isFocused()) {
+			showKEIndicator(context,x-19,commandField.getY()+1);
+		}
 		super.render(context, mouseX, mouseY, delta);
+	}
+
+	private void showKEIndicator(DrawContext context, int x, int y) {
+		final MinecraftClient client = MinecraftClient.getInstance();
+		final Text KOREAN = Text.literal("\uD55C");
+		final Text ENGLISH = Text.literal("\uC601");
+		x+=6;
+		y+=2;
+		if (KoreanPatchClient.KOREAN) {
+			context.fill(x-6, y-2, x+6, y+10, -65536);
+			context.fill(x-5, y-1, x+5, y+9, Objects.requireNonNull(client).options.getTextBackgroundColor(-587202560));
+			context.drawCenteredTextWithShadow(client.textRenderer, KOREAN, x, y, 16777215);
+		}
+		else{
+			context.fill(x-6, y-2, x+6, y+10, -16711936);
+			context.fill(x-5, y-1, x+5, y+9, Objects.requireNonNull(client).options.getTextBackgroundColor(-587202560));
+			context.drawCenteredTextWithShadow(client.textRenderer, ENGLISH, x, y, 16777215);
+		}
 	}
 
 	protected void renderLineNumber(DrawContext context) {
