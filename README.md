@@ -7,6 +7,8 @@
 [![CurseForge downloads](https://cf.way2muchnoise.eu/short_483538_downloads.svg?badge_style=flat)](https://www.curseforge.com/minecraft/mc-mods/command-block-ide)
 [![Modrinth downloads](https://img.shields.io/modrinth/dt/command-block-ide?color=00af5c&logo=modrinth&style=flat-square)](https://modrinth.com/mod/command-block-ide/)
 
+Forked from [arm32x/command-block-ide](https://github.com/arm32x/command-block-ide)
+
 Replaces the command block GUI to allow editing multiple command blocks at once.
 
 <img alt="Requires Fabric API" src="https://i.imgur.com/HabVZJR.png" width="179" height="60" />
