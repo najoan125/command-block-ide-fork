@@ -42,7 +42,7 @@ dependencies {
     val assertj_version: String by project
     testImplementation("org.assertj:assertj-core:${assertj_version}")
 
-    implementation(files("libs/koreanpatch-1.3.1-1.20.1.jar"))
+    implementation(files("libs/koreanpatch-1.3.2-1.20.2.jar"))
 }
 
 java {

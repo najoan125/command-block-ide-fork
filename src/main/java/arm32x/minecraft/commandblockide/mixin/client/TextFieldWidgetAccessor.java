@@ -13,7 +13,7 @@ public interface TextFieldWidgetAccessor {
 	@Accessor int getEditableColor();
 	@Accessor int getUneditableColor();
 	@Accessor TextRenderer getTextRenderer();
-	@Accessor int getFocusedTicks();
+	@Accessor long getLastSwitchFocusTime();
 	@Accessor boolean isFocusUnlocked();
 
 	@Invoker int invokeGetMaxLength();
