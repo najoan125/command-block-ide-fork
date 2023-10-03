@@ -171,9 +171,9 @@ public abstract class CommandEditor extends Container implements Dirtyable, Draw
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double amount1, double amount2) {
-		return suggestor.mouseScrolled(amount1 + amount2)
-			|| super.mouseScrolled(mouseX, mouseY, amount1, amount2);
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+		return suggestor.mouseScrolled(Screen.hasShiftDown() ? 0 : verticalAmount)
+				|| super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 	}
 
 	@Override

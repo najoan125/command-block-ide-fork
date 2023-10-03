@@ -276,6 +276,10 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
     // support tabs yet.
 	private static final int INDENT_SIZE = 4;
 
+	// The amount of time the cursor will spend being either visible or
+	// invisible before switching to the other state.
+	private static final long CURSOR_BLINK_INTERVAL_MS = 300;
+
 	private final EditBox editBox;
 
 	private boolean horizontalScrollEnabled;
@@ -373,9 +377,10 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
     }
 
     @Override
-    public void moveCursor(int offset, boolean shiftKeyPressed) {
-        editBox.moveCursor(CursorMovement.RELATIVE, offset);
-    }
+	public void moveCursor(int offset, boolean hasShiftDown) {
+		editBox.setSelecting(hasShiftDown);
+		editBox.moveCursor(CursorMovement.RELATIVE, offset);
+	}
 
     private void moveCursor(double mouseX, double mouseY) {
         double virtualX = mouseX - getInnerX() + getHorizontalScroll();
@@ -400,14 +405,14 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
     }
 
     @Override
-    public void setCursor(int cursor, boolean shiftKeyPressed) {
-        editBox.moveCursor(CursorMovement.ABSOLUTE, cursor);
-    }
+	public void setCursor(int cursor, boolean hasShiftDown) {
+		editBox.setSelecting(hasShiftDown);
+		editBox.moveCursor(CursorMovement.ABSOLUTE, cursor);
+	}
 
     @Override
     public void setSelectionStart(int cursor) {
-        editBox.setSelecting(true);
-        setCursor(cursor, false);
+		setCursor(cursor, true);
     }
 
 	@Override
@@ -483,12 +488,12 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 		if (this.isMouseOver(mouseX, mouseY)) {
-			boolean changed = false;
-			if (Screen.hasShiftDown() && isHorizontalScrollEnabled()) {
-				changed = setHorizontalScroll(getHorizontalScroll() - (int)Math.round(horizontalAmount * SCROLL_SENSITIVITY));
-			} else if (isVerticalScrollEnabled()) {
-				changed = setVerticalScroll(getVerticalScroll() - (int)Math.round(verticalAmount * SCROLL_SENSITIVITY));
-			}
+			horizontalAmount = Screen.hasShiftDown() ? verticalAmount : horizontalAmount;
+			verticalAmount = Screen.hasShiftDown() ? 0 : verticalAmount;
+
+			boolean changed = setHorizontalScroll(getHorizontalScroll() - (int)Math.round(horizontalAmount * SCROLL_SENSITIVITY));
+			changed = changed || setVerticalScroll(getVerticalScroll() - (int)Math.round(verticalAmount * SCROLL_SENSITIVITY));
+
 			// This updates the position of the suggestions window.
 			if (cursorChangeListener != null) {
 				cursorChangeListener.run();
@@ -525,7 +530,8 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
 		int x = this.getX() + (self.getDrawsBackground() ? 4 : 0) - horizontalScroll;
 		int y = this.getY() + (self.getDrawsBackground() ? 3 : 0) - verticalScroll;
 
-		boolean showCursor = isFocused() && (Util.getMeasuringTimeMs() - self.getLastSwitchFocusTime()) / 300L % 2L == 0L;
+		long timeSinceLastSwitchFocusMs = Util.getMeasuringTimeMs() - self.getLastSwitchFocusTime();
+		boolean showCursor = isFocused() && timeSinceLastSwitchFocusMs / CURSOR_BLINK_INTERVAL_MS % 2 == 0;
 		boolean lineCursor = getCursor() < getText().length() || getText().length() >= self.invokeGetMaxLength();
 
 		int cursorLine = getCurrentLineIndex();

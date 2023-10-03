@@ -246,15 +246,17 @@ public abstract class CommandIDEScreen<E extends CommandEditor> extends Screen i
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double amount1, double amount2) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 		for (CommandEditor editor : editors) {
-			if (editor.mouseScrolled(mouseX, mouseY, amount1, amount2)) return true;
+			if (editor.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) return true;
 		}
-		if (maxScrollOffset != 0 && amount2 != 0 && mouseY < height - 36 && !Screen.hasShiftDown()) {
-			setScrollOffset(getScrollOffset() - (int)Math.round(amount2 * SCROLL_SENSITIVITY));
+
+		double amount = Screen.hasShiftDown() ? 0 : verticalAmount;
+		if (maxScrollOffset != 0 && amount != 0 && mouseY < height - 36 && !Screen.hasShiftDown()) {
+			setScrollOffset(getScrollOffset() - (int)Math.round(amount * SCROLL_SENSITIVITY));
 			return true;
 		}
-		return super.mouseScrolled(mouseX, mouseY, amount1, amount2);
+		return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 	}
 
 	public int getScrollOffset() {
@@ -334,7 +336,8 @@ public abstract class CommandIDEScreen<E extends CommandEditor> extends Screen i
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		renderBackground(context, mouseX, mouseY, delta);
+		// Avoid this.renderBackground because it's a no-op (see below).
+		super.renderBackground(context, mouseX, mouseY, delta);
 
 		for (CommandEditor editor : editors) {
 			editor.render(context, mouseX, mouseY, delta);
@@ -361,6 +364,12 @@ public abstract class CommandIDEScreen<E extends CommandEditor> extends Screen i
 		}
 
 		matrices.pop();
+	}
+
+	@Override
+	public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+		// No-op. This is a hack to prevent the background from being drawn a
+		// second time from super.render.
 	}
 
 	@Override
