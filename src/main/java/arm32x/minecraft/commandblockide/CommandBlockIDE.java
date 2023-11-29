@@ -6,20 +6,15 @@ import arm32x.minecraft.commandblockide.mixinextensions.server.CommandFunctionEx
 import arm32x.minecraft.commandblockide.server.command.EditFunctionCommand;
 import arm32x.minecraft.commandblockide.util.PacketMerger;
 import com.mojang.serialization.DataResult;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.resource.*;
+import net.minecraft.resource.DirectoryResourcePack;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.ZipResourcePack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.function.CommandFunction;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -28,12 +23,18 @@ import net.minecraft.util.PathUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 public final class CommandBlockIDE implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-			EditFunctionCommand.register(dispatcher);
-		});
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> EditFunctionCommand.register(dispatcher));
 
 		final PacketMerger functionMerger = new PacketMerger();
 		ServerPlayNetworking.registerGlobalReceiver(Packets.APPLY_FUNCTION, (server, player, handler, buf, responseSender) -> {
@@ -41,7 +42,7 @@ public final class CommandBlockIDE implements ModInitializer {
 			try {
 				maybeMerged = functionMerger.append(buf);
 			} catch (PacketMerger.InvalidSplitPacketException e) {
-				e.printStackTrace();
+				e.printStackTrace(System.out);
 			}
 			if (maybeMerged.isPresent()) {
 				PacketByteBuf merged = maybeMerged.get();
@@ -134,7 +135,7 @@ public final class CommandBlockIDE implements ModInitializer {
 	}
 
 	private static void updateFunctionLines(MinecraftServer server, Identifier functionId, List<String> lines) {
-		Optional<CommandFunction> maybeFunction = server.getCommandFunctionManager().getFunction(functionId);
+		Optional<CommandFunction<ServerCommandSource>> maybeFunction = server.getCommandFunctionManager().getFunction(functionId);
 		maybeFunction.ifPresent(function -> ((CommandFunctionExtension)function).ide$setOriginalLines(lines));
 	}
 

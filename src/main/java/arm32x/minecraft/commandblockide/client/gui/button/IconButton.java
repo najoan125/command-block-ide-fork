@@ -1,12 +1,9 @@
 package arm32x.minecraft.commandblockide.client.gui.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import java.util.List;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -44,10 +41,10 @@ public abstract class IconButton extends PressableWidget {
 	}
 
 	@Override
-	public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
 		boolean drawsBackground = drawsBackground();
 		if (drawsBackground) {
-			super.renderButton(context, mouseX, mouseY, delta);
+			super.renderWidget(context, mouseX, mouseY, delta);
 		}
 
 		var texture = getTexture();

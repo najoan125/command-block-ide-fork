@@ -401,7 +401,7 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
 			charIndex++;
 		}
 
-		setCursor(charIndex, false);
+		setCursor(charIndex, Screen.hasShiftDown());
     }
 
     @Override
@@ -505,7 +505,7 @@ public class MultilineTextFieldWidget extends TextFieldWidget {
 	}
 
 	@Override
-	public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
 		if (!isVisible()) {
 			return;
 		}
