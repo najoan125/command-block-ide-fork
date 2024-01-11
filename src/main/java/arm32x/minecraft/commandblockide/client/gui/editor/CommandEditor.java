@@ -17,8 +17,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -31,7 +29,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +37,7 @@ import java.util.function.IntConsumer;
 import java.util.stream.Stream;
 
 @Environment(EnvType.CLIENT)
-public abstract class CommandEditor extends Container implements Dirtyable, Drawable, Element {
+public abstract class CommandEditor extends Container implements Dirtyable {
 	private final int x;
 	private int y;
 	private int width;
@@ -76,8 +73,8 @@ public abstract class CommandEditor extends Container implements Dirtyable, Draw
 
 		commandField = addSelectableChild(new MultilineTextFieldWidget(
 			textRenderer,
-			x + leftPadding + 20 + 1 +18, y + 1,
-			width - leftPadding - rightPadding - 20 - 2 -18, height - 2,
+			x + leftPadding + 20 +18, y,
+			width - leftPadding - rightPadding - 20 -18, height,
 			Text.translatable("advMode.command")
 				.append(Text.translatable("commandBlockIDE.narrator.editorIndex", index + 1))
 		) {
@@ -264,7 +261,7 @@ public abstract class CommandEditor extends Container implements Dirtyable, Draw
 	public void setY(int y) {
  		this.y = y;
 
- 		commandField.setY(y + 1);
+ 		commandField.setY(y);
 		suggestor.refresh();
 
 	}
@@ -276,7 +273,7 @@ public abstract class CommandEditor extends Container implements Dirtyable, Draw
 	public void setWidth(int width) {
 		this.width = width;
 
-		commandField.setWidth(width - leftPadding - rightPadding - 20 - 2);
+		commandField.setWidth(width - leftPadding - rightPadding - 20);
 
 		suggestor.refresh();
 	}
@@ -289,7 +286,7 @@ public abstract class CommandEditor extends Container implements Dirtyable, Draw
 		boolean changed = height != this.height;
 		this.height = height;
 
-		commandField.setHeight(height - 2);
+		commandField.setHeight(height);
 
 		suggestor.refresh();
 

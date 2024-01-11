@@ -2,6 +2,15 @@ package arm32x.minecraft.commandblockide.client.storage;
 
 import arm32x.minecraft.commandblockide.client.CommandBlockIDEClient;
 import arm32x.minecraft.commandblockide.client.processor.CommandProcessor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
+import org.msgpack.core.MessagePack;
+import org.msgpack.core.MessagePacker;
+import org.msgpack.core.MessageUnpacker;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -11,17 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
-import org.msgpack.core.MessagePack;
-import org.msgpack.core.MessagePacker;
-import org.msgpack.core.MessageUnpacker;
 
 @Environment(EnvType.CLIENT)
 public final class MultilineCommandStorage implements Serializable {
@@ -207,7 +205,8 @@ public final class MultilineCommandStorage implements Serializable {
 	}
 
 	private static File getFile() {
-		return new File(MinecraftClient.getInstance().runDirectory, "commandblockide.bin");
+		var instance = MinecraftClient.getInstance();
+		return new File(instance.runDirectory, "commandblockide.bin");
 	}
 
 	public static byte[] hash(String string) {
@@ -221,6 +220,4 @@ public final class MultilineCommandStorage implements Serializable {
 
 	private record CommandBlockLocation(boolean isSingleplayer, String world, BlockPos pos) { }
 	private record CommandFunctionLocation(boolean isSingleplayer, String world, Identifier function, int lineIndex) { }
-
-	private static final Logger LOGGER = LogManager.getLogger();
 }

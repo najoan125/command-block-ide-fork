@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.util.math.MatrixStack;
 
-public abstract class Container extends AbstractParentElement implements Drawable, Selectable, Element {
+public abstract class Container extends AbstractParentElement implements Drawable, Selectable {
 	protected final List<Element> children = new ArrayList<>();
 	protected final List<Selectable> selectables = new ArrayList<>();
 	protected final List<Drawable> drawables = new ArrayList<>();
@@ -46,9 +45,9 @@ public abstract class Container extends AbstractParentElement implements Drawabl
 	@Override
 	public SelectionType getType() {
 		return selectables.stream()
-			.map(Selectable::getType)
-			.max(Comparator.naturalOrder())
-			.orElse(SelectionType.NONE);
+				.map(Selectable::getType)
+				.max(Comparator.naturalOrder())
+				.orElse(SelectionType.NONE);
 	}
 
 	@Override

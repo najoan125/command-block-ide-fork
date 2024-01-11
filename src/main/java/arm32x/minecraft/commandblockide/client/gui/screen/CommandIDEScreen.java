@@ -19,12 +19,9 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -385,5 +382,5 @@ public abstract class CommandIDEScreen<E extends CommandEditor> extends Screen i
 		saveButton.active = loaded;
 	}
 
-	private static final Logger LOGGER = LogManager.getLogger();
+	// private static final Logger LOGGER = LogManager.getLogger();
 }
