@@ -60,8 +60,6 @@ loom {
     accessWidenerPath.set(File("src/main/resources/commandblockide.accesswidener"))
 }
 
-project.version = "0.4.4"
-
 tasks.processResources {
     inputs.property("version", project.version)
 
