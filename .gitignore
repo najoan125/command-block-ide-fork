@@ -1,4 +1,6 @@
 run
+command-block-ide_client.launch
+command-block-ide_server.launch
 
 ### Created by https://www.gitignore.io
 ### Gradle ###
